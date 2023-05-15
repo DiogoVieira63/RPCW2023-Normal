@@ -1,0 +1,47 @@
+extends layout
+
+block content
+  -console.log("Back",back)
+  if voltar 
+    button.w3-button.w3-black.w3-margin-bottom 
+      a(href="/") Voltar
+  header.w3-container.w3-center.w3-light-gray
+    h3 Stats
+    ul.w3-ul.w3-border
+      li 
+        b Número de contratos 
+        span #{contratos.length}
+      if !voltar
+        li
+          b Número de instituições 
+          span #{instituicoes}
+        li
+          b Número de cursos distintos
+          span  #{cursos}
+      if voltar
+        li
+          b Nome da instituição
+          span  #{nome}
+        li
+          b NIPCInstituicao
+          span  #{nipc}
+
+
+  table.w3-table-all
+    tr
+      th _id
+      th DataInicioContrato
+      th DataFimContrato
+      th NomeInstituicao
+      th AreasInvestigacao
+    - for (var i = 0; i < contratos.length; i++)
+      - var contracto = contratos[i]
+      tr
+        td 
+          a(href=contracto._id) #{contracto._id}
+        td #{contracto.DataInicioContrato}
+        td #{contracto.DataFimContrato}
+        td
+          a(href="/inst/" + contracto.NIPCInstituicao) #{contracto.NomeInstituicao}
+        td #{contracto.AreasInvestigacao}
+

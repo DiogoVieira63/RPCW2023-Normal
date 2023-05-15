@@ -1,0 +1,67 @@
+1.2 Queries
+
+1 - Quantos contratos estão na base de dados;
+db.contracts.countDocuments()
+17943
+2 - Quantos contratos foram realizados pela Universidade do Minho?
+Utilização do regex para conseguir encontrar nomes como Universidade do Minho - Escola de Ciências.
+db.contracts.find({"NomeInstituicao" : {$regex: /.*Universidade do Minho.*/} },{}).count()
+1104
+
+3 - Qual a lista das áreas das pessoas contratadas (ordenada alfabeticamente e sem repetições)? (AreaCNAEF)
+db.contracts.distinct("AreaCNAEF").sort()
+
+4 - Qual a distribuição por ano dos contratos? (quantos contratos em cada ano)
+Agregar por ano do ínicio de contrato
+db.contracts.aggregate([{$group : {_id : {$year: {$dateFromString : {dateString: '$DataInicioContrato', format:"%d/%m/%Y"}}}, docs: {$sum: 1}} } ])
+[
+  { _id: 2019, docs: 5833 },
+  { _id: 2017, docs: 1310 },
+  { _id: 2021, docs: 2465 },
+  { _id: 2018, docs: 2042 },
+  { _id: 2020, docs: 6293 }
+]
+
+5 - Qual a distribuição dos contratos por instituição?
+Agregar nome de instituição
+db.contracts.aggregate([{$group : {_id : "$NomeInstituicao", docs: {$sum: 1}} } ])
+
+---
+
+Para o setup da base de dados, foi adicionado o ficheiro emprego-cientifico.json, assim como fornecido, com o comando:
+mongoimport -d scienceJobs -c contracts --file emprego-cientifico.json --jsonArray
+
+Para a query relativa ao id do contrato irá ser usado o id do mongo.
+
+---
+
+Para executar a aplicação de dados:
+- ir para a diretoria ex1/contracts_dados
+- npm install
+- npm start
+
+Para executar a aplicação de interface:
+- ir para a diretoria ex2/contracts_interface
+- npm install
+- npm start
+
+--- 
+
+Para as queries:
+GET /contracts/courses: devolve a lista dos cursos dos contratados (sem repetições);
+GET /contracts/institutions: devolve a lista das instituições contratantes (sem repetições);
+
+utiliza-se a função do mongo distinct, que já fornece sem repetições.
+
+
+Na interface:
+Utilia-se o mesmo template pug tanto para a página inicial como para página da instituição, com apenas a diferença na metainformação apresentada e na possibilidade de retroceder para a página princiapal, caso se encontre na da instituição.
+
+
+
+
+
+
+
+
+
